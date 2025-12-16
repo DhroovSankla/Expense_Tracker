@@ -21,4 +21,15 @@ class UserService(private val userRepository: UserRepository) {
         return userRepository.findById(id)
             .orElseThrow { IllegalArgumentException("User not found with ID: $id") }
     }
+    // 3. Login Logic
+    fun loginUser(email: String, password: String): User {
+        val user = userRepository.findByEmail(email)
+            .orElseThrow { IllegalArgumentException("User not found") }
+
+        if (user.password != password) {
+            throw IllegalArgumentException("Invalid password")
+        }
+
+        return user
+    }
 }

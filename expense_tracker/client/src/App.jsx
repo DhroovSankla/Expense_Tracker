@@ -2,7 +2,8 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Dashboard from './pages/DashBoard'
 import AddExpense from './pages/AddExpense'
-
+import Login from './pages/Login'
+import Register from './pages/Register'
 
 function App() {
   return (
@@ -15,7 +16,11 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         {/* We will add the "Add Expense" page later */}
        <Route path="/add" element={<AddExpense />} />
-      </Routes>
+
+       <Route path="/login" element={<Login />} />
+       <Route path="/register" element={<Register />} />
+      
+       </Routes>
     </>
   )
 }

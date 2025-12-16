@@ -19,6 +19,11 @@ class ExpenseService(
         val category = categoryRepository.findById(categoryId)
             .orElseThrow { IllegalArgumentException("Category not found") }
 
+        println("DEBUG: Trying to add expense...")
+        println("DEBUG: Logged-In User ID: ${user.id}")
+        println("DEBUG: Category ID: ${category.id}")
+        println("DEBUG: Category Owner ID: ${category.user.id}")
+
         // Security Check: Does this category belong to this user?
         if (category.user.id != userId) {
             throw IllegalArgumentException("You cannot use someone else's category!")

@@ -1,18 +1,31 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom' // Import this
 import api from '../api/axiosConfig'
 
 const Dashboard = () => {
-  // 1. State to hold our data
+  const navigate = useNavigate()
   const [expenses, setExpenses] = useState([])
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null) // Track the user
 
-  // 2. Fetch data when the page loads
   useEffect(() => {
+    // 1. GET USER FROM STORAGE
+    const loggedInUser = localStorage.getItem('user')
+    
+    if (!loggedInUser) {
+      // If no user found, kick them to Login
+      navigate('/login')
+      return
+    }
+
+    const foundUser = JSON.parse(loggedInUser)
+    setUser(foundUser)
+
+    // 2. FETCH DATA FOR *THIS* USER SPECIFICALLY
     const fetchData = async () => {
       try {
-        // We ask the backend for User #1's data
-        const response = await api.get('/expenses/user/1')
-        console.log("Data received:", response.data) // Check console to see this!
+        // DYNAMIC URL: Uses foundUser.id instead of "1"
+        const response = await api.get(`/expenses/user/${foundUser.id}`)
         setExpenses(response.data)
       } catch (error) {
         console.error("Error connecting to backend:", error)
@@ -22,28 +35,26 @@ const Dashboard = () => {
     }
 
     fetchData()
-  }, [])
+  }, [navigate]) // Dependency array
 
   return (
     <div className="container">
-      <h1>My Dashboard</h1>
+      {/* Show the User's Name */}
+      <h1>{user ? `${user.username}'s Dashboard` : 'Dashboard'}</h1>
 
-      {/* The Expense Card */}
+      {/* ... Rest of your JSX stays exactly the same ... */}
       <div className="card">
         <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
           <h2>Recent Expenses</h2>
           <span style={{color: 'var(--accent)'}}>Total Items: {expenses.length}</span>
         </div>
 
-        {/* LOADING STATE */}
-        {loading && <p>Loading data from server...</p>}
+        {loading && <p>Loading...</p>}
 
-        {/* EMPTY STATE */}
         {!loading && expenses.length === 0 && (
-          <p style={{color: 'var(--text-muted)'}}>No expenses found yet. Go spend some money!</p>
+          <p style={{color: 'var(--text-muted)'}}>No expenses found. Go spend some money!</p>
         )}
 
-        {/* DATA LIST */}
         <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
           {expenses.map((expense) => (
             <div key={expense.id} style={{
@@ -64,7 +75,6 @@ const Dashboard = () => {
             </div>
           ))}
         </div>
-
       </div>
     </div>
   )

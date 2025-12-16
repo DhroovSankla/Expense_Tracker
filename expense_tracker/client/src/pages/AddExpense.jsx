@@ -10,18 +10,28 @@ const AddExpense = () => {
     date: new Date().toISOString().split('T')[0] // Today's date
   })
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // 1. Get the current user
+    const user = JSON.parse(localStorage.getItem('user'))
+    
+    if (!user) {
+        alert("Please login first")
+        navigate('/login')
+        return
+    }
+
     try {
       await api.post('/expenses', {
-        userId: 1,      // Hardcoded for now
-        categoryId: 1,  // Hardcoded 'Food' for now
+        userId: user.id,      // <--- USE DYNAMIC ID
+        categoryId: 12,        // Still hardcoded (Next Sprint)
         description: formData.description,
         amount: parseFloat(formData.amount),
         date: formData.date
       })
       alert('Expense Added!')
-      navigate('/') // Go back to dashboard
+      navigate('/')
     } catch (error) {
       console.error("Error adding expense:", error)
       alert("Failed to add expense")

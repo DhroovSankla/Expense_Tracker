@@ -19,5 +19,12 @@ class UserController(private val userService: UserService) {
     fun getUser(@PathVariable id: Long): ResponseEntity<User> {
         return ResponseEntity.ok(userService.getUserById(id))
     }
+
+    data class LoginRequest(val email: String, val password: String)
+
+    @PostMapping("/login")
+    fun login(@RequestBody request: LoginRequest): ResponseEntity<User> {
+        return ResponseEntity.ok(userService.loginUser(request.email, request.password))
+    }
 }
 
